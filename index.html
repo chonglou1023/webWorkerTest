@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id='res'></div>
+    <script>
+        // var myWorker = new Worker('work.js');
+        // myWorker.onmessage = function (event) { // 接收来自子线程内部的数据
+        //     console.log('Received message ', event.data);
+        //     document.getElementById('res').innerHTML = `<pre>${JSON.stringify(event.data, null, 2)}</pre>`
+        // }
+
+        // myWorker.postMessage('Work done!'); // 向`worker`内部发送数据
+
+        var transWorker = new Worker('transfer.js');
+        // Create a 32MB "file" and fill it.
+        var uInt8Array = new Uint8Array(1024 * 1024 * 32); // 32MB
+        for (var i = 0; i < uInt8Array.length; ++i) {
+            uInt8Array[i] = i;
+        }
+        console.log('before tranfer:', uInt8Array);
+        transWorker.onmessage = (e) => {
+            console.log(e.data);
+            console.log('after tranfer:', uInt8Array);
+        }
+        transWorker.postMessage(uInt8Array.buffer, [uInt8Array.buffer]);
+    </script>
+</body>
+
+</html>
